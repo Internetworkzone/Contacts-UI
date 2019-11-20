@@ -30,7 +30,10 @@ class _HomePageState extends State<HomePage> {
       body: contactList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          gotoEdit('Add New Contact', Contacts('', ''));
+          gotoEdit(
+            'Add New Contact',
+            Contacts('', '', null),
+          );
         },
         child: Icon(Icons.add),
       ),
@@ -45,17 +48,14 @@ class _HomePageState extends State<HomePage> {
           color: Colors.white,
           elevation: 2.0,
           child: ListTile(
-            leading: Hero(
-              tag: 'icon',
-              child: CircleAvatar(
-                child: Text(
-                  this
-                      .contactsList[position]
-                      .name
-                      .substring(0, 1)
-                      .toUpperCase(),
-                  style: TextStyle(fontSize: 25, color: Colors.white),
-                ),
+            leading: CircleAvatar(
+              child: Text(
+                this
+                    .contactsList[position]
+                    .name
+                    .substring(0, 1)
+                    .toUpperCase(),
+                style: TextStyle(fontSize: 25, color: Colors.white),
               ),
             ),
             title: Text(

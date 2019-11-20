@@ -116,7 +116,7 @@ class _ViewPageState extends State<ViewPage> {
               ),
               onPressed: () {
                 gotoEdit('Edit Contact',
-                    Contacts(this.contacts.name, this.contacts.number));
+                    Contacts(this.contacts.name, this.contacts.number,this.contacts.id));
               },
             ),
           ),

@@ -1,5 +1,5 @@
 class Contacts {
-  Contacts(this._name, this._number);
+  Contacts(this._name, this._number, this._id);
   int _id;
   String _name;
   String _number;
