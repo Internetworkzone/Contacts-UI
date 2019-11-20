@@ -120,9 +120,10 @@ class _AddEditState extends State<AddEdit> {
     int result;
     if (contacts.id != null) {
       result = await dataDb.updateContact(contacts);
-    } else {
-      result = await dataDb.insertContact(contacts);
+    } else if(contacts.name.isNotEmpty&&contacts.number.isNotEmpty){
+      result=await dataDb.insertContact(contacts);
     }
+    result=null;
   }
 
   void gotoHome() {
