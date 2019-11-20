@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
       title: 'Contacts',
       theme: ThemeData(),
       home: HomePage(),
-      
+      debugShowCheckedModeBanner: false,
     );
   }
 }

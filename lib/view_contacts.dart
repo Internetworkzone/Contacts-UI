@@ -22,37 +22,11 @@ class _ViewPageState extends State<ViewPage> {
   DatabaseDB dataDb = DatabaseDB();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget>[
-          GestureDetector(
-            child: Row(
-              children: <Widget>[
-                Text(
-                  'Edit',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Icon(
-                  Icons.edit,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  width: 20,
-                )
-              ],
-            ),
-            onTap: () {
-              gotoEdit('Edit Contact',
-                  Contacts(this.contacts.name, this.contacts.number));
-            },
-          ),
-        ],
       ),
       body: ListView(
         children: <Widget>[
@@ -113,6 +87,38 @@ class _ViewPageState extends State<ViewPage> {
                 ),
               ),
             ],
+          ),
+          Padding(
+            padding:
+                EdgeInsets.only(top: 15.0, bottom: 15.0, left: 80, right: 80),
+            child: RaisedButton(
+              padding: EdgeInsets.all(15),
+              color: Theme.of(context).primaryColorDark,
+              textColor: Theme.of(context).primaryColorLight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Edit',
+                    textScaleFactor: 2,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Icon(
+                    Icons.edit,
+                    size: 30,
+                  ),
+                ],
+              ),
+              onPressed: () {
+                gotoEdit('Edit Contact',
+                    Contacts(this.contacts.name, this.contacts.number));
+              },
+            ),
           ),
         ],
       ),

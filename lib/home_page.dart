@@ -38,7 +38,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   ListView contactList() {
-
     return ListView.builder(
       itemCount: count,
       itemBuilder: (BuildContext context, int position) {
@@ -46,19 +45,26 @@ class _HomePageState extends State<HomePage> {
           color: Colors.white,
           elevation: 2.0,
           child: ListTile(
-            leading: CircleAvatar(
-              child: Text(
-                this.contactsList[position].name.substring(0, 1).toUpperCase(),
-                style: TextStyle(fontSize: 25, color: Colors.white),
+            leading: Hero(
+              tag: 'icon',
+              child: CircleAvatar(
+                child: Text(
+                  this
+                      .contactsList[position]
+                      .name
+                      .substring(0, 1)
+                      .toUpperCase(),
+                  style: TextStyle(fontSize: 25, color: Colors.white),
+                ),
               ),
             ),
             title: Text(
               this.contactsList[position].name,
-              style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               this.contactsList[position].number,
-              style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             trailing: GestureDetector(
               child: Icon(
@@ -100,11 +106,12 @@ class _HomePageState extends State<HomePage> {
       updateListView();
     }
   }
-    void gotoEdit(String name, Contacts contacts) async {
+
+  void gotoEdit(String name, Contacts contacts) async {
     bool result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddEdit(name,contacts),
+        builder: (context) => AddEdit(name, contacts),
       ),
     );
     if (result == true) {
