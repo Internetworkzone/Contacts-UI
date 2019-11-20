@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+import 'database.dart';
+import 'contactsInput.dart';
+import 'home_page.dart';
 
-class Details extends StatefulWidget {
-  Details(this.appBarTitle);
+class AddEdit extends StatefulWidget {
+  AddEdit(this.appBarTitle, this.contacts);
 
-  final String appBarTitle;
+  String appBarTitle;
+  Contacts contacts;
 
   @override
-  _DetailsState createState() => _DetailsState(this.appBarTitle);
+  _AddEditState createState() => _AddEditState(this.appBarTitle, this.contacts);
 }
 
-class _DetailsState extends State<Details> {
-  _DetailsState(this.appBarTitle);
-  final String appBarTitle ;
+class _AddEditState extends State<AddEdit> {
+  DatabaseDB dataDb = DatabaseDB();
+  _AddEditState(this.appBarTitle, this.contacts);
+
+  String appBarTitle;
+  Contacts contacts;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
@@ -19,6 +26,9 @@ class _DetailsState extends State<Details> {
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = Theme.of(context).textTheme.title;
+
+    nameController.text = contacts.name;
+    numberController.text = contacts.number;
 
     return Scaffold(
       appBar: AppBar(
@@ -36,22 +46,27 @@ class _DetailsState extends State<Details> {
                 style: textStyle,
                 onChanged: (value) {
                   debugPrint('Something changed in Title Text Field');
+                  updateName();
                 },
                 decoration: InputDecoration(
-                    labelText: 'Name',
-                    labelStyle: textStyle,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0))),
+                  labelText: 'Name',
+                  labelStyle: textStyle,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
               child: TextField(
                 keyboardType: TextInputType.number,
+                maxLength: 10,
                 controller: numberController,
                 style: textStyle,
                 onChanged: (value) {
                   debugPrint('Something changed in Description Text Field');
+                  updateNumber();
                 },
                 decoration: InputDecoration(
                     labelText: 'Phone Number',
@@ -77,7 +92,7 @@ class _DetailsState extends State<Details> {
                       onPressed: () {
                         setState(() {
                           debugPrint("Save button clicked");
-                          gotoHome();
+                          _save();
                         });
                       },
                     ),
@@ -88,22 +103,34 @@ class _DetailsState extends State<Details> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _delete();
-        },
-        child: Icon(Icons.delete),
-        backgroundColor: Colors.red,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
-  void _delete() async {
+  void updateName() {
+    contacts.name = nameController.text;
+  }
+
+  void updateNumber() {
+    contacts.number = numberController.text;
+  }
+
+  void _save() async {
     gotoHome();
+
+    int result;
+    if (contacts.id != null) {
+      result = await dataDb.updateContact(contacts);
+    } else {
+      result = await dataDb.insertContact(contacts);
+    }
   }
 
   void gotoHome() {
-    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomePage(),
+      ),
+    );
   }
 }

@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
-import 'details_page.dart';
-
+import 'add_edit.dart';
+import 'contactsInput.dart';
+import 'package:sqflite/sqflite.dart';
+import 'dart:async';
+import 'database.dart';
+import 'view_contacts.dart';
 
 class HomePage extends StatefulWidget {
-  final int count = 0;
-
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final int count = 0;
+  int count = 0;
+  DatabaseDB databaseDB = DatabaseDB();
+  List<Contacts> contactsList;
 
   @override
   Widget build(BuildContext context) {
+    if (contactsList == null) {
+      contactsList = List<Contacts>();
+      updateListView();
+    }
     return Scaffold(
       appBar: AppBar(
+        leading: Text(''),
         title: Text('Contacts'),
       ),
       body: contactList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          gotoDetails('Add New Contact');
+          gotoEdit('Add New Contact', Contacts('', ''));
         },
         child: Icon(Icons.add),
       ),
@@ -29,7 +38,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   ListView contactList() {
-    TextStyle titleStyle = Theme.of(context).textTheme.subhead;
 
     return ListView.builder(
       itemCount: count,
@@ -38,11 +46,20 @@ class _HomePageState extends State<HomePage> {
           color: Colors.white,
           elevation: 2.0,
           child: ListTile(
-            title: Text(
-              'Dummy Name',
-              style: titleStyle,
+            leading: CircleAvatar(
+              child: Text(
+                this.contactsList[position].name.substring(0, 1).toUpperCase(),
+                style: TextStyle(fontSize: 25, color: Colors.white),
+              ),
             ),
-            subtitle: Text('Dummy Number'),
+            title: Text(
+              this.contactsList[position].name,
+              style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              this.contactsList[position].number,
+              style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+            ),
             trailing: GestureDetector(
               child: Icon(
                 Icons.phone,
@@ -51,8 +68,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {},
             ),
             onTap: () {
-              debugPrint("ListTile Tapped");
-              gotoDetails('Contact Details');
+              gotoDetails(this.contactsList[position]);
             },
           ),
         );
@@ -60,8 +76,39 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void gotoDetails(String appBarTitle) async {
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Details(appBarTitle)));
+  void updateListView() {
+    final Future<Database> dbFuture = databaseDB.initialiseDatabase();
+    dbFuture.then((database) {
+      Future<List<Contacts>> contactsListFuture = databaseDB.getContactsList();
+      contactsListFuture.then((contactsList) {
+        setState(() {
+          this.contactsList = contactsList;
+          this.count = contactsList.length;
+        });
+      });
+    });
+  }
+
+  void gotoDetails(Contacts contacts) async {
+    bool result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ViewPage(contacts),
+      ),
+    );
+    if (result == true) {
+      updateListView();
+    }
+  }
+    void gotoEdit(String name, Contacts contacts) async {
+    bool result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddEdit(name,contacts),
+      ),
+    );
+    if (result == true) {
+      updateListView();
+    }
   }
 }
