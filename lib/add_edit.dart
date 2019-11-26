@@ -40,7 +40,7 @@ class _AddEditState extends State<AddEdit> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-              child: TextField(
+              child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: nameController,
                 style: textStyle,
@@ -59,9 +59,13 @@ class _AddEditState extends State<AddEdit> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-              child: TextField(
+              child: TextFormField(
                 keyboardType: TextInputType.number,
                 maxLength: 10,
+                validator: minNumber,
+                onSaved: (String val) {
+                  this.contacts.number = val;
+                },
                 controller: numberController,
                 style: textStyle,
                 onChanged: (value) {
@@ -120,10 +124,13 @@ class _AddEditState extends State<AddEdit> {
     int result;
     if (contacts.id != null) {
       result = await dataDb.updateContact(contacts);
-    } else if(contacts.name.isNotEmpty&&contacts.number.isNotEmpty){
-      result=await dataDb.insertContact(contacts);
+    } else if (contacts.name.isNotEmpty &&
+        contacts.number.isNotEmpty &&
+        contacts.name != this.contacts.name &&
+        contacts.number != this.contacts.number) {
+      result = await dataDb.insertContact(contacts);
     }
-    result=null;
+    result = null;
   }
 
   void gotoHome() {
@@ -133,5 +140,12 @@ class _AddEditState extends State<AddEdit> {
         builder: (context) => HomePage(),
       ),
     );
+  }
+
+  String minNumber(String value) {
+    if (value.length != 10)
+      return 'Mobile Number must be of 10 digit';
+    else
+      return null;
   }
 }

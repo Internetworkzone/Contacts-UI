@@ -50,11 +50,7 @@ class _HomePageState extends State<HomePage> {
           child: ListTile(
             leading: CircleAvatar(
               child: Text(
-                this
-                    .contactsList[position]
-                    .name
-                    .substring(0, 1)
-                    .toUpperCase(),
+                this.contactsList[position].name.substring(0, 1).toUpperCase(),
                 style: TextStyle(fontSize: 25, color: Colors.white),
               ),
             ),
