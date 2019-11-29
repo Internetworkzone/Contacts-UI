@@ -15,6 +15,7 @@ class _HomePageState extends State<HomePage> {
   int count = 0;
   DatabaseDB databaseDB = DatabaseDB();
   List<Contacts> contactsList;
+  Contacts contacts;
 
   @override
   Widget build(BuildContext context) {
@@ -44,34 +45,45 @@ class _HomePageState extends State<HomePage> {
     return ListView.builder(
       itemCount: count,
       itemBuilder: (BuildContext context, int position) {
-        return Card(
-          color: Colors.white,
-          elevation: 2.0,
-          child: ListTile(
-            leading: CircleAvatar(
-              child: Text(
-                this.contactsList[position].name.substring(0, 1).toUpperCase(),
-                style: TextStyle(fontSize: 25, color: Colors.white),
+        return Dismissible(
+          key: UniqueKey(),
+          background: Container(color: Colors.blue),
+          onDismissed: (direction) {
+            databaseDB.deleteContact(contacts.id);
+          },
+          child: Card(
+            color: Colors.white,
+            elevation: 2.0,
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Text(
+                  this
+                      .contactsList[position]
+                      .name
+                      .substring(0, 1)
+                      .toUpperCase(),
+                  style: TextStyle(fontSize: 25, color: Colors.white),
+                ),
               ),
-            ),
-            title: Text(
-              this.contactsList[position].name,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              this.contactsList[position].number,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            trailing: GestureDetector(
-              child: Icon(
-                Icons.phone,
-                color: Colors.grey,
+              title: Text(
+                this.contactsList[position].name,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-              onTap: () {},
+              subtitle: Text(
+                this.contactsList[position].number,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              trailing: GestureDetector(
+                child: Icon(
+                  Icons.phone,
+                  color: Colors.grey,
+                ),
+                onTap: () {},
+              ),
+              onTap: () {
+                gotoDetails(this.contactsList[position]);
+              },
             ),
-            onTap: () {
-              gotoDetails(this.contactsList[position]);
-            },
           ),
         );
       },

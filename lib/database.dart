@@ -12,6 +12,7 @@ class DatabaseDB {
   String dataId = 'id';
   String dataName = 'name';
   String dataNumber = 'number';
+  int position;
 
   factory DatabaseDB() {
     if (_databaseDB == null) {
@@ -76,10 +77,8 @@ class DatabaseDB {
   }
 
   Future<List<Contacts>> getContactsList() async {
-    var contactsMapList =
-        await getContactsMapList(); 
-    int count =
-        contactsMapList.length; 
+    var contactsMapList = await getContactsMapList();
+    int count = contactsMapList.length;
 
     List<Contacts> contactsList = List<Contacts>();
     for (int i = 0; i < count; i++) {

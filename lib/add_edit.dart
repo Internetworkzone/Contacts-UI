@@ -19,6 +19,8 @@ class _AddEditState extends State<AddEdit> {
 
   String appBarTitle;
   Contacts contacts;
+  List<Contacts> contactsList;
+  int listPosition;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
@@ -45,15 +47,14 @@ class _AddEditState extends State<AddEdit> {
                 controller: nameController,
                 style: textStyle,
                 onChanged: (value) {
-                  debugPrint('Something changed in Title Text Field');
                   updateName();
                 },
                 decoration: InputDecoration(
                   labelText: 'Name',
                   labelStyle: textStyle,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
+                  // border: OutlineInputBorder(
+                  //   borderRadius: BorderRadius.circular(5.0),
+                  // ),
                 ),
               ),
             ),
@@ -62,10 +63,6 @@ class _AddEditState extends State<AddEdit> {
               child: TextFormField(
                 keyboardType: TextInputType.number,
                 maxLength: 10,
-                validator: minNumber,
-                onSaved: (String val) {
-                  this.contacts.number = val;
-                },
                 controller: numberController,
                 style: textStyle,
                 onChanged: (value) {
@@ -95,8 +92,8 @@ class _AddEditState extends State<AddEdit> {
                       ),
                       onPressed: () {
                         setState(() {
-                          debugPrint("Save button clicked");
                           _save();
+                          print(contacts.id);
                         });
                       },
                     ),
@@ -119,18 +116,41 @@ class _AddEditState extends State<AddEdit> {
   }
 
   void _save() async {
-    gotoHome();
-
     int result;
-    if (contacts.id != null) {
-      result = await dataDb.updateContact(contacts);
-    } else if (contacts.name.isNotEmpty &&
-        contacts.number.isNotEmpty &&
-        contacts.name != this.contacts.name &&
-        contacts.number != this.contacts.number) {
-      result = await dataDb.insertContact(contacts);
+
+    if (contacts.name.isNotEmpty &&
+            contacts.number.isNotEmpty &&
+            contacts.number.length == 10 &&
+            contacts.number.substring(0, 1) == '9' ||
+        contacts.number.substring(0, 1) == '8' ||
+        contacts.number.substring(0, 1) == '7' ||
+        contacts.number.substring(0, 1) == '6') {
+      if (contacts.id != null) {
+        result = await dataDb.updateContact(contacts);
+      } else {
+        result = await dataDb.insertContact(contacts);
+      }
+      gotoHome();
+    } else {
+      AlertDialog alertDialog = AlertDialog(
+        title: Text('Enter Valid Input'),
+        content: Text('Enter the name and 10 digit Indian Mobile Number'),
+        actions: <Widget>[
+          // usually buttons at the bottom of the dialog
+          new FlatButton(
+            child: new Text("Close"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+      showDialog(
+        context: context,
+        builder: (_) => alertDialog,
+      );
+      result = null;
     }
-    result = null;
   }
 
   void gotoHome() {
@@ -140,12 +160,5 @@ class _AddEditState extends State<AddEdit> {
         builder: (context) => HomePage(),
       ),
     );
-  }
-
-  String minNumber(String value) {
-    if (value.length != 10)
-      return 'Mobile Number must be of 10 digit';
-    else
-      return null;
   }
 }
